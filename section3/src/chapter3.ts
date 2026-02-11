@@ -1,66 +1,81 @@
 /**
- * unknown Type :: 전체 집합
+ * 기본 타입 간의 호환성
  */
-function unknownExam() {
-    let a : unknown = 1;
-    // 업 캐스팅
-    let b : unknown = "hello";
-    let c : unknown = true;
-    let d : unknown = null;
-    let e : unknown = undefined;
+let num1: number = 10;
+let num2: 10 = 10;
 
-    let unknownVar: unknown;
-    // let num: number = unknownVar; >> 다운 캐스팅이라 불가능
-    // let str: string = unknownVar;
-    // let bool: boolean = unknownVar;
-}
+num1 = num2;
 
 /**
- * never Type
- * 공집합. 모든 집합의 부분 집합으로, 모든 타입의 서브 타입
+ * 객체 타입 간의 호환성
+ * -> 어떤 객체 타입을 다른 객체 타입으로 취급해도 괜찮은가?
  */
-function neverExam() {
-    function neverFunc(): never {
-        while (true) {}
-    }
+type Animal = {
+    name: string;
+    color: string;
+};
 
-    // 업 캐스팅
-    let num: number = neverFunc();
-    let str: string = neverFunc();
-    let bool: boolean = neverFunc();
+type Dog = {
+    name: string;
+    color: string;
+    breed: string;
+};
 
-    // 다운 캐스팅
-    // let never1: never = 10;
-    // let never2: never = "string";
-    // let never3: never = true;
-}
+let animal: Animal = {
+    name: "기린",
+    color: "yellow",
+};
+
+let dog: Dog = {
+    name: "돌돌이",
+    color: "brown",
+    breed: "진도",
+};
+
+animal = dog; // 업 캐스팅
+// dog = animal; 다운 캐스팅
+// 즉, Animal 타입이 슈퍼 타입이고 Dog 타입이 서브 타입
+// Dog 타입이 Animal 타입이 가진 속성을 다 가지면서 더 많은 속성을 가지고 있어 슈퍼타입이라고 생각할 수도 있음
+// 하지만 구조적 타입 시스템에 따라 Dog 타입은 Animal 타입에 있는 속성이 반드시 포함되기 때문에 Animal 타입이 슈퍼타입임
+
+type Book = {
+    name: string;
+    price: number;
+};
+
+type ProgrammingBook = {
+    name: string;
+    price: number;
+    skill: string;
+};
+
+let book: Book;
+let programmingBook: ProgrammingBook = {
+    name: "한 입 크기로 잘라먹는 리액트",
+    price: 33000,
+    skill: "reactjs"
+};
+
+book = programmingBook;
+// programmingBook = book;
 
 /**
- * void Type : 반환할 값이 없을 때
+ * 초과 property 검사
+ * 변수를 초기화할 때 초기화하는 값으로 객체 리터럴을 사용하면 발동하는 검사
+ * -> 초과 프로퍼티를 사용할 수 없도록 막음
  */
-function voidExam() {
-    function voidFunc(): void {
-        console.log("hi");
-        return undefined;
-    }
-    
-    let voidVar: void = undefined;
-    // void type이 undefined 타입의 슈퍼 타입이기 때문에 반환하거나 할당 가능
-}
+let book2: Book = {
+    name: "한 입 크기로 잘라먹는 리액트",
+    price: 33000,
+    // skill: "reactjs"
+};
 
-/**
- * any Type :: 치트키. 타입계층도를 무시함.
- * 모든 타입의 슈퍼 타입이 될 수도 있고 모든 타입의 서브 타입이 될 수도 있음(이 경우 never 타입 제외)
- */
-function anyExam() {
-    let unknownVar: unknown;
-    let anyVar: any;
-    let undefinedVar: undefined;
-    let neverVar: never;
+let boo3: Book = programmingBook;
 
-    anyVar = unknownVar; // 다운 캐스팅 가능
-    undefinedVar = anyVar; // 다운 캐스팅 가능
-    // neverVar = anyVar;
-}
-// 즉, any 타입은 자신에게 다운 캐스팅 하는 것도, 자신이 다운 캐스팅 하는 것도 가능함
-// 단, never 타입은 공집합으로 어떤 타입도 never 타입으로 다운 캐스팅 할 수 없음.
+function func(book: Book) {}
+func({
+    name: "한 입 크기로 잘라먹는 리액트",
+    price: 33000,
+    // skill: "reactjs"
+});
+func(programmingBook);
